@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <title>Medical School Seconary Essays</title>
+    </head>
+    <body>
+		<div id="app">
+            <h1>Secondary Essays</h1>
+            <h2>{{message}}</h2>
+                <div v-for="item in items">	
+                	<p>{{ item['fields']['School'] }}</p>
+                    <p>{{ item['fields']['Year'] }}</p>
+                    <p>{{ item['fields']['Prompt'] }}</p>
+                </div> 
+                <a> ... </a>  
+                <todo-item></todo-item>      
+        </div><!--app-->
+        
+        <!-- Include Dependancy Scripts -->
+        <script type="text/javascript" src="https://unpkg.com/vue"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
+		<script type="text/javascript">
+
+			Vue.component('todo-item', {
+			  props: [],
+			  template: '<li>Hey</li>'
+			})
+
+
+
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    items: [],
+                    message: 'Hello Vue!'
+                },
+                mounted: function(){
+                   this.loadItems(); 
+
+                },
+                methods: {
+                    loadItems: function(){
+                        
+                        // Init variables
+                        var self = this
+                        var app_id = "appQHoYjXQJlqAgl1";
+                        var app_key = "key51TOWJtS1OcES0";
+                        this.items = []
+						axios.get(
+                            "https://api.airtable.com/v0/"+app_id+"/Secondaries?view=Grid%20view",
+                            { 
+                                headers: { Authorization: "Bearer "+app_key } 
+                            }
+                        ).then(function(response){
+                            self.items = response.data.records
+                            
+                        }).catch(function(error){
+                            console.log(error)
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
