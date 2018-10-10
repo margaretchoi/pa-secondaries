@@ -5,13 +5,18 @@
     <body>
 		<div id="app">
             <h1>Secondary Essays</h1>
-            <h2>{{message}}</h2>
-<!--                 <div v-for="item in items">	
-                	<p>{{ item['fields']['School'] }}</p>
-                    <p>{{ item['fields']['Year'] }}</p>
-                    <p>{{ item['fields']['Prompt'] }}</p>
-                </div>  -->
-            <div id="demo">
+            <ul>
+           <li v-for="item in items">
+                    <!-- <p>{{ item }}</p> -->
+                <p>{{ item['fields']['School'] }} {{ item['fields']['Year'] }} ({{ item['fields']['State'] }})</p>
+				        <p>{{ item['fields']['Prompt'] }}</p>
+                </li>
+            </ul> 
+<!--             <div>
+            	<h3>All Entries</h3>
+            	<p>              {{items}}</p>
+            </div> -->
+<!--             <div id="demo">
               <form id="search">
                 Search <input name="query" v-model="searchQuery">
               </form>
@@ -20,7 +25,7 @@
                 :columns="gridColumns"
                 :filter-key="searchQuery">
               </demo-grid>
-            </div>
+            </div> -->
                 <todo-item></todo-item>  
 
 
@@ -32,38 +37,39 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js"></script>
 
 
-<!-- component template -->
-<script type="text/x-template" id="grid-template">
-  <table>
-    <thead>
-      <tr>
-        <th v-for="key in columns"
-          @click="sortBy(key)"
-          :class="{ active: sortKey == key }">
-          {{ key | capitalize }}
-          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-          </span>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="entry in filteredData">
-        <td v-for="key in columns">
-          {{entry[key]}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</script>
+    <!-- component template -->
+    <script type="text/x-template" id="grid-template">
+      <table>
+        <thead>
+          <tr>
+            <th v-for="key in columns"
+              @click="sortBy(key)"
+              :class="{ active: sortKey == key }">
+              {{ key | capitalize }}
+              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="entry in filteredData">
+            <td v-for="key in columns">
+              {{entry[key]}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </script>
 
 		<script type="text/javascript">
 
-			Vue.component('todo-item', {
-			  props: [],
-			  template: '<li>Hey</li>'
-			})
+            // To Do component
+      			Vue.component('todo-item', {
+      			  props: [],
+      			  template: '<div>To-Do Template</div>'
+      			})
 
-
+            // Demo Grid component 
             Vue.component('demo-grid', {
               
               props: {
@@ -74,13 +80,6 @@
               template: '#grid-template',
               data: function () {
                 var sortOrders = {}
-                        let searchQuery = ''
-                        let gridColumns =['name', 'power']
-                        let gridData = [
-                          { name: 'Chuck Norris', power: Infinity },
-                          { name: 'Bruce Lee', power: 9000 },
-                          { name: 'Jackie Chan', power: 7000 },
-                          { name: 'Jet Li', power: 8000 }]
                 this.columns.forEach(function (key) {
                   sortOrders[key] = 1
                 })
@@ -125,40 +124,41 @@
               }
             })
 
+            // Application view
             var app = new Vue({
                 el: '#app',
 
                 data: {
                     searchQuery: '',
                     gridColumns: ['name', 'power'],
-                    gridData: [
-                      { name: 'Chuck Norris', power: Infinity },
-                      { name: 'Bruce Lee', power: 9000 },
-                      { name: 'Jackie Chan', power: 7000 },
-                      { name: 'Jet Li', power: 8000 }],
-                    items: [],
-                    message: 'Secondary header'
+                    // gridData: [
+                    //   { name: 'Chuck Norris', power: Infinity },
+                    //   { name: 'Bruce Lee', power: 9000 },
+                    //   { name: 'Jackie Chan', power: 7000 },
+                    //   { name: 'Jet Li', power: 8000 }],
+                    // gridColumns: ['school', 'state', 'year'],
+                    // gridData: [this.items],
+                    items: []
                 },
                 mounted: function(){
                    this.loadItems(); 
-
                 },
                 methods: {
                     loadItems: function(){
-                        
                         // Init variables
                         var self = this
                         var app_id = "appQHoYjXQJlqAgl1";
-                        var app_key = "key51TOWJtS1OcES0";
+                        // Read-only application key
+                        var app_key = "keyycHKCV0vsJ26l4";
                         this.items = []
-						axios.get(
+						    axios.get(
                             "https://api.airtable.com/v0/"+app_id+"/Secondaries?view=Grid%20view",
                             { 
                                 headers: { Authorization: "Bearer "+app_key } 
                             }
                         ).then(function(response){
                             self.items = response.data.records
-                            
+                            console.log(response.data.records)
                         }).catch(function(error){
                             console.log(error)
                         })
